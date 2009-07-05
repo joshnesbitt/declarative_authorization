@@ -43,6 +43,7 @@ module Authorization
           user = options[:user] || Authorization.current_user
 
           engine = options[:engine] || Authorization::Engine.instance
+          
           engine.permit!(privileges, :user => user, :skip_attribute_test => true,
                          :context => context)
 
@@ -111,12 +112,17 @@ module Authorization
         # [:+include_read+] Also check for :+read+ privilege after find.
         #
         def self.using_access_control (options = {})
+          
           options = {
             :context => nil,
             :include_read => false
           }.merge(options)
-
+          
+          self.cattr_accessor :burt_auth_context
+          self.burt_auth_context = options[:context]
+          
           class_eval do
+            
             [:create, :update, [:destroy, :delete]].each do |action, privilege|
               send(:"before_#{action}") do |object|
                 Authorization::Engine.instance.permit!(privilege || action,
@@ -137,6 +143,7 @@ module Authorization
             def self.using_access_control?
               true
             end
+            
           end
         end
 

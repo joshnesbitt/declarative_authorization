@@ -30,7 +30,12 @@ module Authorization
         context = object_or_sym
       else
         object = object_or_sym
+        # brent patch
+        if object.respond_to? :burt_auth_context
+          context = object.burt_auth_context
+        end
       end
+      
       # TODO infer context also from self.class.name
       authorization_engine.permit?(privilege, 
           {:user => current_user, 
@@ -298,9 +303,13 @@ module Authorization
       if @filter_block
         return contr.instance_eval(&@filter_block)
       end
-      context = @context || contr.class.controller_name.to_sym
+      # brent patch
+      context = @context || contr.class.controller_path.gsub('/', '_').to_sym
+      # context = @context || contr.class.controller_name.to_sym
       object = @attribute_check ? load_object(contr, context) : nil
       privilege = @privilege || :"#{contr.action_name}"
+      
+      RAILS_DEFAULT_LOGGER.info ">>>>>>>>>>>>>>>>> permit! context=#{context}, object=#{object.inspect}, controller_context"
       
       #puts "Trying permit?(#{privilege.inspect}, "
       #puts "               :user => #{contr.send(:current_user).inspect}, "
