@@ -154,7 +154,7 @@ module Authorization
       end
       
       options[:context] ||= options[:object] && options[:object].class.table_name.to_sym rescue NoMethodError
-      RAILS_DEFAULT_LOGGER.info ">>>>>>>>>>>>>>> permit! #{options[:context]}"
+      # RAILS_DEFAULT_LOGGER.info ">>>>>>>>>>>>>>> permit! #{options[:context]}"
       user, roles, privileges = user_roles_privleges_from_options(privilege, options)
 
       # find a authorization rule that matches for at least one of the roles and 
