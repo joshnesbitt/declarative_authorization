@@ -309,7 +309,7 @@ module Authorization
       object = @attribute_check ? load_object(contr, context) : nil
       privilege = @privilege || :"#{contr.action_name}"
       
-      # RAILS_DEFAULT_LOGGER.info ">>>>>>>>>>>>>>>>> permit! context=#{context}, object=#{object.inspect}, controller_context"
+      RAILS_DEFAULT_LOGGER.info ">>>>>>>>>>>>>>>>> permit! context=#{context}, object=#{object.inspect}"
       
       #puts "Trying permit?(#{privilege.inspect}, "
       #puts "               :user => #{contr.send(:current_user).inspect}, "
