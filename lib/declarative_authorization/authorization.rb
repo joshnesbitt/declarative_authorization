@@ -162,14 +162,17 @@ module Authorization
       attr_validator = AttributeValidator.new(self, user, options[:object], privilege, options[:context])
       rules = matching_auth_rules(roles, privileges, options[:context])
       if rules.empty?
-        raise NotAuthorized, "No matching rules found for #{privilege} for #{user.inspect} " +
-          "(roles #{roles.inspect}, privileges #{privileges.inspect}, " +
-          "context #{options[:context].inspect})."
+        raise NotAuthorized, "No matching rules found for #{privilege} for #{user.name} (#{user.role.title}) " +
+          "context #{options[:context]})."
+        #raise NotAuthorized, "No matching rules found for #{privilege} for #{user.inspect} " +
+        #  "(roles #{roles.inspect}, privileges #{privileges.inspect}, " +
+        #  "context #{options[:context].inspect})."
       end
       
       # Test each rule in turn to see whether any one of them is satisfied.
       unless rules.any? {|rule| rule.validate?(attr_validator, options[:skip_attribute_test])}
-        raise AttributeAuthorizationError, "#{privilege} not allowed for #{user.inspect} on #{(options[:object] || options[:context]).inspect}."
+        #raise AttributeAuthorizationError, "#{privilege} not allowed for #{user.inspect} on #{(options[:object] || options[:context]).inspect}."
+        raise AttributeAuthorizationError, "#{privilege} not allowed for #{user.name} on #{(options[:object] || options[:context]).inspect}."
       end
       true
     end
