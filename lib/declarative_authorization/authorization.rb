@@ -162,7 +162,12 @@ module Authorization
       attr_validator = AttributeValidator.new(self, user, options[:object], privilege, options[:context])
       rules = matching_auth_rules(roles, privileges, options[:context])
       if rules.empty?
-        raise NotAuthorized, "No matching rules found for #{privilege} for #{user.name} (#{user.role.title}) " +
+        unless user.is_a?(GuestUser)
+          username, user_role = user.name, user.role.title
+        else
+          username, user_role = 'Guest', 'GuestRole'
+        end
+        raise NotAuthorized, "No matching rules found for #{privilege} for #{username} (#{user_role}) " +
           "context #{options[:context]})."
         #raise NotAuthorized, "No matching rules found for #{privilege} for #{user.inspect} " +
         #  "(roles #{roles.inspect}, privileges #{privileges.inspect}, " +
@@ -626,6 +631,8 @@ module Authorization
   # Represents a pseudo-user to facilitate guest users in applications
   class GuestUser
     attr_reader :role_symbols
+    #attr_reader :name
+    #attr_reader :role
     def initialize (roles = [:guest])
       @role_symbols = roles
     end
